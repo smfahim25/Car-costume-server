@@ -194,7 +194,7 @@ async function run() {
         //admin post api:
         app.post('/adminpost', async (req, res) => {
             const newPart = req.body
-            const result = await partsCollection.insertOne(newPart)
+            const result = await toolsCollection.insertOne(newPart)
             res.send(result)
         })
         //delete product api:
