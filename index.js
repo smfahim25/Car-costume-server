@@ -131,7 +131,7 @@ async function run() {
         //update api for myProfile
         app.put('/myprofile/:email', async (req, res) => {
             const email = req.params.email
-            const info = req.body
+            // const info = req.body
             const filter = { email: email }
             const options = { upsert: true }
             const updatedoc = {
