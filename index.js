@@ -247,9 +247,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Hello from bike manufacturer')
+    res.send('Hello from car parts manufacturer')
 })
 
 app.listen(port, () => {
-    console.log(`bike manufacturer app listening on port ${port}`)
+    console.log(`Cars parts manufacturer app listening on port ${port}`)
 })
