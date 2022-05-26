@@ -7,6 +7,7 @@ const port = process.env.PORT || 5000
 require('dotenv').config()
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
+
 //middleware
 app.use(express.json())
 app.use(cors())
