@@ -201,7 +201,7 @@ async function run() {
         app.delete('/part/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId }
-            const result = await partsCollection.deleteOne(query)
+            const result = await toolsCollection.deleteOne(query)
             res.send(result)
         })
         //stripe backend api:
