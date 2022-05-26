@@ -1,16 +1,15 @@
-const express = require('express');
-const cors = require('cors');
+const express = require('express')
+const app = express()
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const cors = require('cors');
+const port = process.env.PORT || 5000
+require('dotenv').config()
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-
-const app = express();
-const port = process.env.PORT || 5000;
-
-app.use(cors());
-app.use(express.json());
+//middleware
+app.use(express.json())
+app.use(cors())
 
 function verifyJwt(req, res, next) {
     const authHeader = req.headers.authorization
@@ -28,32 +27,33 @@ function verifyJwt(req, res, next) {
 }
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ortxu.mongodb.net/?retryWrites=true&w=majority`
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ortxu.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run() {
     try {
         await client.connect();
-        const toolsCollection = client.db('car-manufacturer').collection('tools');
+        const partsCollection = client.db('car-manufacturer').collection('parts');
         const orderCollection = client.db('car-manufacturer').collection('orders');
         const reviewCollection = client.db('car-manufacturer').collection('reviews');
         const profileCollection = client.db('car-manufacturer').collection('profile');
         const userCollection = client.db('car-manufacturer').collection('user');
         const paymentCollection = client.db('car-manufacturer').collection('payments');
 
-        app.get('/tools', async (req, res) => {
+        app.get('/part', async (req, res) => {
             const query = {}
-            const cursor = toolsCollection.find(query)
-            const tools = await cursor.toArray()
-            res.send(tools)
+            const cursor = partsCollection.find(query)
+            const parts = await cursor.toArray()
+            res.send(parts)
         })
         //single id data load
-        app.get('/tools/:id', async (req, res) => {
+        app.get('/part/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
-            const tools = await toolsCollection.findOne(query)
-            res.send(tools)
+            const part = await partsCollection.findOne(query)
+            res.send(part)
         })
         app.get('/myorder', verifyJwt, async (req, res) => {
             const email = req.query.customerEmail
@@ -61,8 +61,8 @@ async function run() {
             if (email === decodedEmail) {
                 const query = { customerEmail: email }
                 const cursor = orderCollection.find(query)
-                const tools = await cursor.toArray()
-                res.send(tools)
+                const parts = await cursor.toArray()
+                res.send(parts)
             }
             else {
                 return res.status(403).send({ message: 'forbidden access' })
@@ -78,13 +78,13 @@ async function run() {
 
 
         //order place api:
-        app.post('/tools', async (req, res) => {
+        app.post('/part', async (req, res) => {
             const order = req.body
             const result = await orderCollection.insertOne(order)
             res.send(result)
         })
         //update api:
-        app.put('/tools/:id', async (req, res) => {
+        app.put('/part/:id', async (req, res) => {
             const id = req.params.id
             const updatePart = req.body
             const filter = { _id: ObjectId(id) }
@@ -116,18 +116,18 @@ async function run() {
             const result = await profileCollection.insertOne(newProfile)
             res.send(result)
         })
-        app.put('/myprofile', async (req, res) => {
-            const updateProfile = req.body
-            const options = { upsert: true }
-            const updatedoc = {
-                $set: {
-                    profile: updateProfile
-                }
-            }
-            const result = await profileCollection.updateOne(updatedoc, options)
-            res.send(result)
+        // app.put('/myprofile', async (req, res) => {
+        //     const updateProfile = req.body
+        //     const options = { upsert: true }
+        //     const updatedoc = {
+        //         $set: {
+        //             profile: updateProfile
+        //         }
+        //     }
+        //     const result = await profileCollection.updateOne(updatedoc, options)
+        //     res.send(result)
 
-        })
+        // })
         //update api for myProfile
         app.put('/myprofile/:email', async (req, res) => {
             const email = req.params.email
@@ -140,6 +140,8 @@ async function run() {
             };
             const result = await profileCollection.updateOne(filter, updatedoc, options)
             res.send(result)
+
+
         })
 
         //user load api:
@@ -152,19 +154,19 @@ async function run() {
         })
 
 
-        // app.put('/user/:email', async (req, res) => {
-        //     const email = req.params.email
-        //     const user = req.body
-        //     const filter = { email: email }//email diye amra user take khujbo
-        //     const options = { upsert: true }
-        //     const updatedoc = {
-        //         //set er moddhe user related info thakbe.ei info amra body theke nibo
-        //         $set: user,
-        //     };
-        //     const result = await userCollection.updateOne(filter, updatedoc, options)
-        //     var token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-        //     res.send({ result, token })
-        // })
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email
+            const user = req.body
+            const filter = { email: email }//email diye amra user take khujbo
+            const options = { upsert: true }
+            const updatedoc = {
+                //set er moddhe user related info thakbe.ei info amra body theke nibo
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updatedoc, options)
+            var token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+            res.send({ result, token })
+        })
         //make admin backend api:
         app.put('/user/admin/:email', verifyJwt, async (req, res) => {
             const email = req.params.email
@@ -192,14 +194,14 @@ async function run() {
         //admin post api:
         app.post('/adminpost', async (req, res) => {
             const newPart = req.body
-            const result = await toolsCollection.insertOne(newPart)
+            const result = await partsCollection.insertOne(newPart)
             res.send(result)
         })
         //delete product api:
         app.delete('/part/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId }
-            const result = await toolsCollection.deleteOne(query)
+            const result = await partsCollection.deleteOne(query)
             res.send(result)
         })
         //stripe backend api:
@@ -231,7 +233,7 @@ async function run() {
             }
             const result = await paymentCollection.insertOne(payment)
             const updateOrder = await orderCollection.updateOne(filter, updatedoc)
-            res.send(updateOrder);
+            res.send(updateOrder)
         })
 
     }
@@ -244,11 +246,10 @@ run().catch(console.dir);
 
 
 
-
 app.get('/', (req, res) => {
-    res.send('Hello From cars costume own portal!');
+    res.send('Hello from bike manufacturer')
 })
 
 app.listen(port, () => {
-    console.log(`Cars costume App listening on port ${port}`)
-});
+    console.log(`bike manufacturer app listening on port ${port}`)
+})
