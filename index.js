@@ -98,11 +98,11 @@ async function run() {
             res.send(result)
         })
         //review post  backend api:
-        // app.post('/addreview', async (req, res) => {
-        //     const newReview = req.body
-        //     const result = await reviewCollection.insertOne(newReview)
-        //     res.send(result)
-        // })
+        app.post('/addreview', async (req, res) => {
+            const newReview = req.body
+            const result = await reviewCollection.insertOne(newReview)
+            res.send(result)
+        })
         //review  data load api:
         app.get('/review', async (req, res) => {
             const query = {}
