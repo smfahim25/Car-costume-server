@@ -116,18 +116,18 @@ async function run() {
             const result = await profileCollection.insertOne(newProfile)
             res.send(result)
         })
-        // app.put('/myprofile', async (req, res) => {
-        //     const updateProfile = req.body
-        //     const options = { upsert: true }
-        //     const updatedoc = {
-        //         $set: {
-        //             profile: updateProfile
-        //         }
-        //     }
-        //     const result = await profileCollection.updateOne(updatedoc, options)
-        //     res.send(result)
+        app.put('/myprofile', async (req, res) => {
+            const updateProfile = req.body
+            const options = { upsert: true }
+            const updatedoc = {
+                $set: {
+                    profile: updateProfile
+                }
+            }
+            const result = await profileCollection.updateOne(updatedoc, options)
+            res.send(result)
 
-        // })
+        })
         //update api for myProfile
         app.put('/myprofile/:email', async (req, res) => {
             const email = req.params.email
