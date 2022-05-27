@@ -139,7 +139,6 @@ async function run() {
             res.send(result)
 
         })
-
         //user load api:
         app.get('/user', verifyJwt, async (req, res) => {
 
