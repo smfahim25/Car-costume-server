@@ -156,19 +156,19 @@ async function run() {
             const orders = await cursor.toArray()
             res.send(orders)
         })
-        // app.put('/user/:email', async (req, res) => {
-        //     const email = req.params.email
-        //     const user = req.body
-        //     const filter = { email: email }//email diye amra user take khujbo
-        //     const options = { upsert: true }
-        //     const updatedoc = {
-        //         //set er moddhe user related info thakbe.ei info amra body theke nibo
-        //         $set: user,
-        //     };
-        //     const result = await userCollection.updateOne(filter, updatedoc, options)
-        //     var token = jwt.sign({ email: email }, process.env.ACCSESS_TOKEN_SECRET, { expiresIn: '1h' });
-        //     res.send({ result, token })
-        // })
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email
+            const user = req.body
+            const filter = { email: email }//email diye amra user take khujbo
+            const options = { upsert: true }
+            const updatedoc = {
+                //set er moddhe user related info thakbe.ei info amra body theke nibo
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updatedoc, options)
+            var token = jwt.sign({ email: email }, process.env.ACCSESS_TOKEN_SECRET, { expiresIn: '1h' });
+            res.send({ result, token })
+        })
         //make admin backend api:
         app.put('/user/admin/:email', verifyJwt, async (req, res) => {
             const email = req.params.email
