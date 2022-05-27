@@ -17,7 +17,7 @@ function verifyJwt(req, res, next) {
         return res.status(401).send({ message: 'unauthorized access' })
     }
     const token = authHeader.split(' ')[1]
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+    jwt.verify(token, process.env.ACCSESS_TOKEN_SECRET, function (err, decoded) {
         if (err) {
             return res.status(403).send({ message: 'forbidden access' })
         }
@@ -35,12 +35,12 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        const partsCollection = client.db('car-manufacturer').collection('parts');
-        const orderCollection = client.db('car-manufacturer').collection('orders');
-        const reviewCollection = client.db('car-manufacturer').collection('reviews');
-        const profileCollection = client.db('car-manufacturer').collection('profile');
-        const userCollection = client.db('car-manufacturer').collection('user');
-        const paymentCollection = client.db('car-manufacturer').collection('payments');
+        const partsCollection = client.db('bicycles_manufacturer').collection('parts');
+        const orderCollection = client.db('bicycles_manufacturer').collection('orders');
+        const reviewCollection = client.db('bicycles_manufacturer').collection('reviews');
+        const profileCollection = client.db('bicycles_manufacturer').collection('profile');
+        const userCollection = client.db('bicycles_manufacturer').collection('user');
+        const paymentCollection = client.db('bicycles_manufacturer').collection('payments');
 
         app.get('/part', async (req, res) => {
             const query = {}
@@ -164,7 +164,7 @@ async function run() {
                 $set: user,
             };
             const result = await userCollection.updateOne(filter, updatedoc, options)
-            var token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+            var token = jwt.sign({ email: email }, process.env.ACCSESS_TOKEN_SECRET, { expiresIn: '1h' });
             res.send({ result, token })
         })
         //make admin backend api:
@@ -247,9 +247,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Hello from bike manufacturer')
+    res.send('Hello from car manufacturer')
 })
 
 app.listen(port, () => {
-    console.log(`bike manufacturer app listening on port ${port}`)
+    console.log(`car manufacturer app listening on port ${port}`)
 })
