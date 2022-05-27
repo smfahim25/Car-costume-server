@@ -151,13 +151,13 @@ async function run() {
             const users = await cursor.toArray()
             res.send(users)
         })
-        app.get('/order', verifyJwt, async (req, res) => {
+        // app.get('/order', async (req, res) => {
 
-            const query = {}
-            const cursor = orderCollection.find(query)
-            const orders = await cursor.toArray()
-            res.send(orders)
-        })
+        //     const query = {}
+        //     const cursor = orderCollection.find(query)
+        //     const orders = await cursor.toArray()
+        //     res.send(orders)
+        // })
 
 
         app.put('/user/:email', async (req, res) => {
@@ -208,6 +208,12 @@ async function run() {
             const id = req.params.id
             const query = { _id: ObjectId }
             const result = await partsCollection.deleteOne(query)
+            res.send(result)
+        })
+        app.delete('/order/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId }
+            const result = await orderCollection.deleteOne(query)
             res.send(result)
         })
         //stripe backend api:
