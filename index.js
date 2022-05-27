@@ -26,6 +26,7 @@ function verifyJwt(req, res, next) {
     });
 }
 
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ortxu.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -168,35 +169,33 @@ async function run() {
         //make admin backend api:
         app.put('/user/admin/:email', verifyJwt, async (req, res) => {
             const email = req.params.email
-            // const requester = req.decoded.email
-            // const requesterAccount = await userCollection.findOne({ email: requester })
-
-            // if (requesterAccount.role === 'admin') {
-            const filter = { email: email }
-            const updatedoc = {
-                //set er moddhe user related info thakbe.ei info amra body theke nibo
-                $set: { role: 'admin' },
-            };
-            const result = await userCollection.updateOne(filter, updatedoc)
-            res.send(result)
-        }
-            // else {
-            //     res.status(403).send({ message: 'forbidden access' })
-            // }
-            // }
-        )
-        // app.get('/admin/:email', async (req, res) => {
-        //     const email = req.params.email;
-        //     const user = await userCollection.findOne({ email: email });
-        //     const isAdmin = user.role === 'admin';
-        //     res.send({ admin: isAdmin })
-        // })
+            const requester = req.decoded.email
+            const requesterAccount = await userCollection.findOne({ email: requester })
+            if (requesterAccount.role === 'admin') {
+                const filter = { email: email }
+                const updatedoc = {
+                    //set er moddhe user related info thakbe.ei info amra body theke nibo
+                    $set: { role: 'admin' },
+                };
+                const result = await userCollection.updateOne(filter, updatedoc)
+                res.send(result)
+            }
+            else {
+                res.status(403).send({ message: 'forbidden access' })
+            }
+        })
+        app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+            res.send({ admin: isAdmin })
+        })
         //admin post api:
-        // app.post('/adminpost', async (req, res) => {
-        //     const newPart = req.body
-        //     const result = await partsCollection.insertOne(newPart)
-        //     res.send(result)
-        // })
+        app.post('/adminpost', async (req, res) => {
+            const newPart = req.body
+            const result = await partsCollection.insertOne(newPart)
+            res.send(result)
+        })
         //delete product api:
         app.delete('/part/:id', async (req, res) => {
             const id = req.params.id
