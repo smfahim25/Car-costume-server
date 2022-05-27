@@ -74,8 +74,6 @@ async function run() {
             const order = await orderCollection.findOne(query)
             res.send(order)
         })
-
-
         //order place api:
         app.post('/part', async (req, res) => {
             const order = req.body
