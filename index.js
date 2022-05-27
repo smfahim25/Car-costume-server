@@ -153,11 +153,7 @@ async function run() {
             const orders = await cursor.toArray()
             res.send(orders)
         })
-        // app.get('/manageorder', async (req, res) => { 
-        //     const query = {}
-        //      const cursor = orderCollection.find(query)
-        //       const manageorders = await cursor.toArray() 
-        //       res.send(manageorders) })
+
         //update manageorder
         app.put('/manageorder/:id', async (req, res) => {
             const id = req.params.id
