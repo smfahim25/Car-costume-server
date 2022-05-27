@@ -151,6 +151,13 @@ async function run() {
             const users = await cursor.toArray()
             res.send(users)
         })
+        app.get('/order', verifyJwt, async (req, res) => {
+
+            const query = {}
+            const cursor = orderCollection.find(query)
+            const orders = await cursor.toArray()
+            res.send(orders)
+        })
 
 
         app.put('/user/:email', async (req, res) => {
