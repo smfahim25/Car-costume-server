@@ -47,12 +47,12 @@ async function run() {
             const parts = await cursor.toArray()
             res.send(parts)
         })
-        app.get('/myOrder', async (req, res) => {
-            const query = {}
-            const cursor = orderCollection.find(query)
-            const parts = await cursor.toArray()
-            res.send(parts)
-        })
+        // app.get('/myOrder', async (req, res) => {
+        //     const query = {}
+        //     const cursor = orderCollection.find(query)
+        //     const parts = await cursor.toArray()
+        //     res.send(parts)
+        // })
         //single id data load
         app.get('/part/:id', async (req, res) => {
             const id = req.params.id
