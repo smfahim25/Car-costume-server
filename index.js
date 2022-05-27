@@ -147,13 +147,32 @@ async function run() {
             const users = await cursor.toArray()
             res.send(users)
         })
-        app.get('/order', verifyJwt, async (req, res) => {
-
+        app.get('/manageorder', verifyJwt, async (req, res) => {
             const query = {}
             const cursor = orderCollection.find(query)
             const orders = await cursor.toArray()
             res.send(orders)
         })
+        // app.get('/manageorder', async (req, res) => { 
+        //     const query = {}
+        //      const cursor = orderCollection.find(query)
+        //       const manageorders = await cursor.toArray() 
+        //       res.send(manageorders) })
+        //update manageorder
+        app.put('/manageorder/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { _id: ObjectId(id) }
+            const updatedoc = {
+                $set: {
+                    shipped: true
+                }
+            }
+            const result = await orderCollection.updateOne(filter, updatedoc)
+            res.send(result)
+
+        })
+
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email
             const user = req.body
